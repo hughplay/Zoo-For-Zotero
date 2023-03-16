@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+USER=$USER
+HOME=$HOME
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --user) USER="$2"; shift ;;
+        --home) HOME="$2"; shift ;;
+        *) echo "Unknown parameter passed: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+echo "----------------------------------------------------"
+echo "Current User: $USER, Current Home: $HOME"
+echo "----------------------------------------------------"
+echo
+
+echo "----------------------------------------------------"
+echo "Copy conda, pip, tmux, zsh configurations into $HOME..."
+echo "----------------------------------------------------"
+rsync -a --stats --ignore-missing-args --chown=$USER:$USER \
+    /root/.localrc \
+    /root/.conda \
+    /root/.condarc \
+    /root/.config \
+    /root/.zshrc \
+    /root/.oh-my-zsh \
+    /root/.tmux \
+    /root/.tmux.conf \
+    /root/.sdkman \
+    $HOME
+echo
+
+echo "----------------------------------------------------"
+echo "Change the permission of android tools"
+echo "----------------------------------------------------"
+chown -R $USER:$USER /opt/*
+#chown -R root:$USER /opt/android-sdk/.android
+#chmod 775 -R /opt/android-sdk/.android
+ls -alh /opt
+echo
+
+echo "----------------------------------------------------"
+echo "The directory structure of $HOME:"
+echo "----------------------------------------------------"
+ls -alh $HOME
+echo
+
+echo "----------------------------------------------------"
+if [ -x "$(command -v zsh)" ]; then
+    echo "Use zsh."
+    chsh -s `which zsh` $USER
+fi
+
+if [ -x "$(command -v conda)" ]; then
+    echo "Initialize conda."
+    conda init zsh bash
+fi
+
+echo "----------------------------------------------------"
+echo
+
+echo "----------------------------------------------------"
+echo "- Enjoy the new environment!                       -"
+echo "- Contact @hughplay if you encounter any problems. -"
+echo "----------------------------------------------------"
+echo

@@ -1,0 +1,13 @@
+
+log/
+data/
+container_home/
+.DS_Store
+.gradle/
+.env
+.idea/
+apikeys.properties
+app/build/
+app/google-services.json
+app/schemas/
+local.properties
